@@ -1,0 +1,9 @@
+spotipy
+yt-dlp
+ffmpeg-python
+mutagen
+fastapi
+uvicorn
+python-multipart
+rich
+python-dotenv

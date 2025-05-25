@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import subprocess
+import sys
+
+def activate_venv():
+    """Activate the virtual environment."""
+    venv_path = os.path.join(os.getcwd(), "venv")
+    if sys.platform == "win32":
+        activate_script = os.path.join(venv_path, "Scripts", "activate.bat")
+    else:
+        activate_script = os.path.join(venv_path, "bin", "activate")
+    if not os.path.exists(activate_script):
+        print("Virtual environment not found. Please run install.sh or install.bat first.")
+        sys.exit(1)
+    if sys.platform == "win32":
+        os.system(f"call {activate_script}")
+    else:
+        os.system(f"source {activate_script}")
+
+def run_cli(args):
+    """Run the CLI interface."""
+    cmd = [sys.executable, "sproteafi_cli.py"] + args
+    subprocess.run(cmd)
+
+def run_web():
+    """Run the Web UI interface."""
+    subprocess.run([sys.executable, "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"])
+
+def main():
+    parser = argparse.ArgumentParser(description="Spro TeaFi: Spotify Playlist Downloader")
+    parser.add_argument("--cli", action="store_true", help="Run in CLI mode")
+    parser.add_argument("--web", action="store_true", help="Run in Web UI mode")
+    parser.add_argument("--help", action="help", help="Show this help message")
+    args, unknown = parser.parse_known_args()
+
+    activate_venv()
+
+    if args.web:
+        print("Starting Web UI on http://localhost:8000")
+        run_web()
+    else:
+        print("Starting CLI mode. Use --help for options.")
+        run_cli(unknown)
+
+if __name__ == "__main__":
+    main()
